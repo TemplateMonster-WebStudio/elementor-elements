@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Barriecito-Regular';
+    src: local('Barriecito Regular'), local('Barriecito-Regular'),
+        url('Barriecito-Regular.woff2') format('woff2'),
+        url('Barriecito-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
