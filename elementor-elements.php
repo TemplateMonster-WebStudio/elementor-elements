@@ -145,10 +145,14 @@ namespace ElementorElements {
 			/* Enqeue scripts */
 			\add_action( 'elementor/frontend/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
+			/* Register additional icons */
+			\add_filter( 'elementor/icons_manager/additional_tabs', [ $this, 'register_additional_icons' ] );
+
 			/* Enqeue styles */
 			\add_action( 'elementor/editor/after_enqueue_styles',   [ $this, 'enqueue_styles' ] );
 			\add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 		}
+
 
 		/**
 		 * Action callback.
@@ -182,6 +186,55 @@ namespace ElementorElements {
 
 			// Then we set a new list of fonts as the fonts setting of the font control
 			$manager->get_control( 'font' )->set_settings( 'options', $new_fonts );
+		}
+
+
+		/**
+		 * Filter callback
+		 * 
+		 * Hooked to 'elementor/icons_manager/additional_tabs' action, with priority 10.
+		 * 
+		 * @param  array  $tabs List of settings for additional Icons Manager tabs
+		 * @return array $tabs  Filtered tabs settings list
+		 */
+		public function register_additional_icons( $tabs=[] ) {
+
+			$tabs['fontello'] = [
+				'name' => 'fontello',
+
+				/* Icons Manager Label */
+				'label' => __( 'Fontello Icons', 'elementor-elements' ),
+				
+				/* Icons list */
+				'url' => Utils::get_url( 'assets/icons/fontello/icons.css' ),
+
+				/* Font Face & basic styles */
+				'enqueue' => [ Utils::get_url( 'assets/icons/fontello/font.css' ) ],
+
+				/* Icon prefix */
+				'prefix' => 'fontello-icon-',
+
+				/* Icon-font class prefix */
+				'displayPrefix' => 'fontello',
+
+				/**
+				 * Selector structure
+				 * <element class="{Class prefix} {Icon prefix}{Icon name}">
+				 */
+
+				/* Icons Manager Icon */
+				'labelIcon' => 'eicon-favorite',
+
+				/* Version */
+				'ver' => null,
+
+				/* List of Icon names */
+				'fetchJson' => Utils::get_url( 'assets/icons/fontello/icons.json' ),
+
+				'native' => false,
+			];
+
+			return $tabs;
 		}
 
 
@@ -306,7 +359,6 @@ namespace ElementorElements {
 
 				error_log( $e->getMessage() );
 			}
-
 		}
 
 
@@ -354,7 +406,6 @@ namespace ElementorElements {
 				null,
 				false
 			);
-
 		}
 
 
@@ -375,6 +426,11 @@ namespace ElementorElements {
 			$this->_enqueue_fonts();
 		}
 
+		/**
+		 * Enqueue find and enqueue custom fonts
+		 * 
+		 * @return null
+		 */
 		private function _enqueue_fonts(){
 
 			$fonts = $this->_get_fonts();
@@ -395,7 +451,6 @@ namespace ElementorElements {
 		}
 
 
-		
 		/**
 		 * Retrives or creates singleton instance.
 		 *
