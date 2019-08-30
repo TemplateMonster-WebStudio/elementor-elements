@@ -159,7 +159,32 @@ namespace ElementorElements {
 				return false;
 			}
 
-			$closure = function ( $template_file ) use ( $template_args ) {
+			$closure = TemplateClosure::instance()->closure( $template, $template_args );
+
+			$closure = $closure->bindTo( $widget, $widget );
+
+			$closure( $template );
+
+			return true;
+		}
+	}
+
+	class TemplateClosure {
+
+		/**
+		 * Closure Holder
+		 * @var $instance
+		 */
+		private static $instance = null;
+
+		/**
+		 * Generates PHP Closure instance
+		 * @param  string $template_file [description]
+		 * @param  array  $template_args [description]
+		 * @return Closure               [description]
+		 */
+		public final function closure( $template_file, $template_args ) {
+			return function ( $template_file ) use ( $template_args ) {
 
 				extract( $template_args );
 
@@ -167,12 +192,19 @@ namespace ElementorElements {
 				include $template_file;
 				ob_end_flush();
 			};
+		}
 
-			$closure = $closure->bindTo( $widget, $widget );
+		/**
+		 * Singleton getter
+		 * @return TemplateClosure class instance
+		 */
+		public static function instance() {
 
-			$closure( $template );
+			if( null === self::$instance ){
+				self::$instance = new self();
+			}
 
-			return true;
+			return self::$instance;
 		}
 	}
 }
